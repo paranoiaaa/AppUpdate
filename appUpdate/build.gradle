@@ -1,23 +1,20 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group='com.github.wqd1994'
-
 dependencies {
-    compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.android.support:support-v4:26.0.2'
 }
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
 
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName '1.0'
     }
-
 }
 
 
