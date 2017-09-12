@@ -27,10 +27,10 @@ compile('com.github.paranoiaaa:AppUpdate:1.0.1') {
 DownloadServiceConnection downloadServiceConnection =new DownloadServiceConnection(new AppUpdateCheckUpdate() {
     @Override
     public void checkUpdate() {
-		------ 网络请前判断是否更新
-		if(update){   
-       		AppUpdate.update(MainActivity.this,url);
-		}
+	    ------ 网络请前判断是否更新
+	    if(update){
+       	    AppUpdate.update(MainActivity.this,url);
+	    }
     }
 });
 AppUpdate.bindUpdateService(this,downloadServiceConnection);
