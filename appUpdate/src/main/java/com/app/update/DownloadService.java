@@ -7,10 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
+import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import java.io.File;
@@ -25,12 +28,10 @@ public class DownloadService extends IntentService {
     private static final String TAG = "DownloadService";
 
     private static final int NOTIFICATION_ID = 0;
-
+    public boolean isDownLoading = false;
     private NotificationManager mNotifyManager;
     private Builder mBuilder;
-
     private MyBinder myBinder;
-    public boolean isDownLoading = false;
 
     public DownloadService() {
         super("DownloadService");
@@ -75,9 +76,8 @@ public class DownloadService extends IntentService {
             long bytesum = 0;
             int byteread = 0;
             in = urlConnection.getInputStream();
-            File dir = StorageUtils.getCacheDirectory(this);
             String apkName = urlStr.substring(urlStr.lastIndexOf("/") + 1, urlStr.length());
-            File apkFile = new File(dir, apkName);
+            File apkFile = new File(Environment.getExternalStorageDirectory() + "/" + apkName);
             out = new FileOutputStream(apkFile);
             byte[] buffer = new byte[BUFFER_SIZE];
 
@@ -138,7 +138,14 @@ public class DownloadService extends IntentService {
             builder.start();
         } catch (IOException ignored) {
         }
-        intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
+        Uri uri;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            uri = Uri.fromFile(apkFile);
+        } else {
+            uri = FileProvider.getUriForFile(getApplicationContext(), "com.app.update.fileprovider", apkFile);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+        intent.setDataAndType(uri, "application/vnd.android.package-archive");
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
